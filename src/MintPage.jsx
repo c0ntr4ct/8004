@@ -4,13 +4,13 @@ import { ethers } from "ethers"; // v5.7.x
 
 // ===== CONFIGURE THESE =====
 const CHAIN_ID = 1; // 1 = Ethereum mainnet, 11155111 = Sepolia, etc.
-const CONTRACT_ADDRESS = "0xYOUR_MINTABLE_TOKEN_ADDRESS"; // <-- your MintableToken address
-const PAYMENT_TOKEN_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // USDT (mainnet)
+const CONTRACT_ADDRESS = "0x9675AB4934A75C8De870673C5364004F08fFbA37"; // <-- your MintableToken address
+const PAYMENT_TOKEN_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC (mainnet)
 // If you deploy on another network, change PAYMENT_TOKEN_ADDRESS accordingly.
 
-const USDT_DECIMALS = 6;
+const USDC_DECIMALS = 6;
 const TOKEN_SYMBOL = "PONG";
-const TOKENS_PER_USDT = 5000; // 1 USDT -> 5,000 PONG (must match on-chain MINT_RATIO)
+const TOKENS_PER_USDC = 5000; // 1 USDC -> 5,000 PONG (must match on-chain MINT_RATIO)
 
 const ERC20_ABI = [
   "function allowance(address owner, address spender) view returns (uint256)",
@@ -116,8 +116,8 @@ export default function MintPage() {
       const allowance = await usdt.allowance(user, CONTRACT_ADDRESS);
 
       if (allowance.lt(usdtAmount)) {
-        setStatus("Approving 1 USDT...");
-        const tx = await usdt.approve(CONTRACT_ADDRESS, usdtAmount);
+        setStatus("Approving unlimited USDC (one-time approval)...");
+        const tx = await usdt.approve(CONTRACT_ADDRESS, ethers.constants.MaxUint256);
         setTxApprove(tx.hash);
         await tx.wait();
       }
@@ -161,10 +161,10 @@ export default function MintPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="bg-black/20 border border-neutral-800 rounded-xl p-4">
               <div className="text-sm text-neutral-400">Price</div>
-              <div className="text-xl mt-1">1 USDT → {TOKENS_PER_USDT.toLocaleString()} {TOKEN_SYMBOL}</div>
+              <div className="text-xl mt-1">1 USDC → {TOKENS_PER_USDT.toLocaleString()} {TOKEN_SYMBOL}</div>
             </div>
             <div className="bg-black/20 border border-neutral-800 rounded-xl p-4">
-              <div className="text-sm text-neutral-400">Your USDT</div>
+              <div className="text-sm text-neutral-400">Your USDC</div>
               <div className="text-xl mt-1">{balances ? Number(balances.usdt).toLocaleString() : "-"}</div>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function MintPage() {
           </div>
 
           <footer className="text-xs text-neutral-500">
-            Make sure you hold 1 USDT on the selected network. This site never holds your keys.
+            Make sure you hold 1 USDC on the selected network. This site never holds your keys.
           </footer>
         </div>
       </div>
