@@ -155,8 +155,8 @@ export default function MintPage() {
       <img
         src="/pong.png"
         alt="PONG background"
-        className="absolute left-1/2 top-1/2 translate-y-[-680px] -translate-x-1/2 w-[58%] opacity-25 pointer-events-none select-none"
-        style={{ zIndex: 0 }}
+        className="absolute left-1/2 top-[60%] -translate-x-1/2 opacity-15 pointer-events-none select-none"
+        style={{ width: 'min(680px, 90vw)', zIndex: 0 }}
       />
 
       <div className="w-full max-w-xl relative z-10">
