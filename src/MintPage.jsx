@@ -4,11 +4,10 @@ import { ethers } from "ethers"; // v5.7.x
 
 // ===== CONFIGURE THESE =====
 const CHAIN_ID = 1; // 1 = Ethereum mainnet, 11155111 = Sepolia, etc.
-const CONTRACT_ADDRESS = "0x9675AB4934A75C8De870673C5364004F08fFbA37"; // <-- your MintableToken address
+const CONTRACT_ADDRESS = "0x9675AB4934A75C8De870673C5364004F08fFbA37"; // MintableToken address
 const PAYMENT_TOKEN_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC (mainnet)
-// If you deploy on another network, change PAYMENT_TOKEN_ADDRESS accordingly.
 
-const USDC_DECIMALS = 6;
+const PAYMENT_DECIMALS = 6; // USDC has 6 decimals
 const TOKEN_SYMBOL = "PONG";
 const TOKENS_PER_USDC = 5000; // 1 USDC -> 5,000 PONG (must match on-chain MINT_RATIO)
 
@@ -46,7 +45,7 @@ export default function MintPage() {
     return "https://etherscan.io/tx/";
   }, []);
 
-  const usdtAmount = useMemo(() => ethers.utils.parseUnits("1", USDT_DECIMALS), []);
+  const paymentAmount = useMemo(() => ethers.utils.parseUnits("1", PAYMENT_DECIMALS), []);
 
   useEffect(() => {
     const eth = window.ethereum;
@@ -83,9 +82,9 @@ export default function MintPage() {
   async function refreshInfo(_signer) {
     try {
       const user = await _signer.getAddress();
-      const usdt = new ethers.Contract(PAYMENT_TOKEN_ADDRESS, ERC20_ABI, _signer);
-      const dec = await usdt.decimals();
-      const bal = await usdt.balanceOf(user);
+      const usdc = new ethers.Contract(PAYMENT_TOKEN_ADDRESS, ERC20_ABI, _signer);
+      const dec = await usdc.decimals();
+      const bal = await usdc.balanceOf(user);
 
       const token = new ethers.Contract(CONTRACT_ADDRESS, MINTABLE_ABI, _signer);
       const minted = await token.publicMinted();
@@ -93,7 +92,7 @@ export default function MintPage() {
       const total = await token.totalSupply();
       const max = await token.MAX_SUPPLY();
 
-      setBalances({ usdt: ethers.utils.formatUnits(bal, dec) });
+      setBalances({ usdc: ethers.utils.formatUnits(bal, dec) });
       setCapInfo({
         minted: ethers.utils.formatUnits(minted, 18),
         cap: ethers.utils.formatUnits(cap, 18),
@@ -112,12 +111,12 @@ export default function MintPage() {
 
     try {
       const user = await signer.getAddress();
-      const usdt = new ethers.Contract(PAYMENT_TOKEN_ADDRESS, ERC20_ABI, signer);
-      const allowance = await usdt.allowance(user, CONTRACT_ADDRESS);
+      const usdc = new ethers.Contract(PAYMENT_TOKEN_ADDRESS, ERC20_ABI, signer);
+      const allowance = await usdc.allowance(user, CONTRACT_ADDRESS);
 
-      if (allowance.lt(usdtAmount)) {
+      if (allowance.lt(paymentAmount)) {
         setStatus("Approving unlimited USDC (one-time approval)...");
-        const tx = await usdt.approve(CONTRACT_ADDRESS, ethers.constants.MaxUint256);
+        const tx = await usdc.approve(CONTRACT_ADDRESS, ethers.constants.MaxUint256);
         setTxApprove(tx.hash);
         await tx.wait();
       }
@@ -161,11 +160,11 @@ export default function MintPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="bg-black/20 border border-neutral-800 rounded-xl p-4">
               <div className="text-sm text-neutral-400">Price</div>
-              <div className="text-xl mt-1">1 USDC → {TOKENS_PER_USDT.toLocaleString()} {TOKEN_SYMBOL}</div>
+              <div className="text-xl mt-1">1 USDC → {TOKENS_PER_USDC.toLocaleString()} {TOKEN_SYMBOL}</div>
             </div>
             <div className="bg-black/20 border border-neutral-800 rounded-xl p-4">
               <div className="text-sm text-neutral-400">Your USDC</div>
-              <div className="text-xl mt-1">{balances ? Number(balances.usdt).toLocaleString() : "-"}</div>
+              <div className="text-xl mt-1">{balances ? Number(balances.usdc).toLocaleString() : "-"}</div>
             </div>
           </div>
 
@@ -187,7 +186,7 @@ export default function MintPage() {
               disabled={!account || !networkOk || loading}
               className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {loading ? "Processing..." : `Mint ${TOKENS_PER_USDT.toLocaleString()} ${TOKEN_SYMBOL} for 1 USDT`}
+              {loading ? "Processing..." : `Mint ${TOKENS_PER_USDC.toLocaleString()} ${TOKEN_SYMBOL} for 1 USDC`}
             </button>
 
             {status && <p className="text-sm text-neutral-300">{status}</p>}
