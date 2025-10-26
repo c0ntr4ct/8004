@@ -185,7 +185,7 @@ export default function MintPage() {
               <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-5">
                 <div className="text-sm text-neutral-500">Price</div>
                 <div className="text-2xl mt-1">
-                  1 USDT → {TOKENS_PER_USDT.toLocaleString()}
+                  1 USDT → ${TOKENS_PER_USDT.toLocaleString()}
                 </div>
               </div>
               <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-5">
@@ -216,9 +216,7 @@ export default function MintPage() {
                 disabled={!account || !networkOk || loading}
                 className="w-full py-4 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition text-lg"
               >
-                {loading
-                  ? "Processing..."
-                  : `Mint ${TOKENS_PER_USDT.toLocaleString()} ${TOKEN_SYMBOL} for 1 USDT`}
+                {loading ? "Processing..." : `MINT ${TOKEN_SYMBOL}`}
               </button>
 
               {status && <p className="text-sm text-neutral-700">{status}</p>}
