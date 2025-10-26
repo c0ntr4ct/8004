@@ -4,7 +4,7 @@ import { ethers } from "ethers"; // v5.7.x
 
 // ===== CONFIG (BSC + USDT + 8004) =====
 const CHAIN_ID = 56; // BNB Smart Chain
-const CONTRACT_ADDRESS = "<TU_NUEVO_CONTRATO>"; // reemplaza con la dirección real del contrato
+const CONTRACT_ADDRESS = "<0xF0B640914A6c27e035FEBE1A15E28E1de3c32aE5>"; // reemplaza con la dirección real del contrato
 const PAYMENT_TOKEN_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // USDT (BSC, 18 decimales)
 
 const TOKEN_SYMBOL = "8004";
